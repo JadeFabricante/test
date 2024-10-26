@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .question {
+            margin-bottom: 10px;
+        }
+        .choices button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+        .result {
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Python Quiz</h1>
+        <div id="start-screen">
+            <p>Choose a difficulty level:</p>
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')">Medium</button>
+            <button onclick="startQuiz('hard')">Hard</button>
+        </div>
+        <div id="quiz-screen" style="display: none;">
+            <div class="question" id="question-text"></div>
+            <div class="choices" id="choices-container"></div>
+            <div class="result" id="result-text"></div>
+            <button id="next-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+        <div id="end-screen" style="display: none;">
+            <p>Your final score is: <span id="final-score"></span></p>
+            <button onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizQuestions = {
+            easy: [
+                { question: "What function is used to print in Python?", choices: ["A) print()", "B) echo()", "C) console()", "D) printOut()"], answer: "A" },
+                { question: "Which symbol is used to comment in Python?", choices: ["A) //", "B) #", "C) <!-- -->", "D) /* */"], answer: "B" }
+            ],
+            medium: [
+                { question: "How do you create a list in Python?", choices: ["A) ()", "B) {}", "C) []", "D) <>"], answer: "C" },
+                { question: "What does the len() function do?", choices: ["A) Returns the length of an object", "B) Prints elements", "C) Adds items", "D) Loops through items"], answer: "A" }
+            ],
+            hard: [
+                { question: "What will be the output of the expression 2 ** 3?", choices: ["A) 5", "B) 6", "C) 8", "D) 9"], answer: "C" },
+                { question: "Which method is used to add an item to the end of a list?", choices: ["A) append()", "B) add()", "C) push()", "D) insert()"], answer: "A" }
+            ]
+        };
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedDifficulty = '';
+        let currentQuestions = [];
+
+        function startQuiz(difficulty) {
+            selectedDifficulty = difficulty;
+            currentQuestions = quizQuestions[difficulty];
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const questionData = currentQuestions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = questionData.question;
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+            questionData.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.innerText = choice;
+                button.onclick = () => checkAnswer(choice.charAt(0));
+                choicesContainer.appendChild(button);
+            });
+            document.getElementById('result-text').innerText = '';
+            document.getElementById('next-button').style.display = 'none';
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const questionData = currentQuestions[currentQuestionIndex];
+            if (selectedAnswer === questionData.answer) {
+                document.getElementById('result-text').innerText = "Correct!";
+                score++;
+            } else {
+                document.getElementById('result-text').innerText = `Incorrect. The correct answer is ${questionData.answer}.`;
+            }
+            document.getElementById('next-button').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'block';
+            document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
